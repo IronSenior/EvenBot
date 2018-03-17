@@ -69,8 +69,6 @@ def new_event(m):
 def get_tag(eve):
     evento = eve.data[2:]
     cid = eve.message.chat.id
-    # Guardar en base de datos lo que ha elegido
-    # Notificar a los usuarios del tag el nuevo evento
 
     msg = "Has seleccionado " + evento + " como tipo de evento"
     send(eve.message, msg)
@@ -111,7 +109,8 @@ def sendEventMessage(m, event):
         *Descripción: * {}
         *URL del grupo: * {}
     """.format(event.tag, event.name, event.date, event.description, event.group))
-    sendLocation(m, event.locX, event.locY)
+    if not event.locX == 0 and not event.locY == 0:
+        sendLocation(m, event.locX, event.locY)
 
 
 @bot.message_handler(commands=['viewEvents'])
@@ -123,7 +122,7 @@ def view_events(m):
     dummyEvents = [['17/03/2018', 'tech', 'Hackathon1', 'http://google.es',
                     37.864741, -4.795475, 'Best description 1', 'Image1.png'],
                    ['17/03/2018', 'tech', 'Hackathon2', 'http://google.es',
-                    37.864741, -4.795475, 'Best description 2', 'Image2.png']]
+                    0, 0, 'Best description 2', 'Image2.png']]
 
     events = list(map(lambda eventArray: Event(
         eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), dummyEvents))
