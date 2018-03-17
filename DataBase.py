@@ -6,6 +6,7 @@ import sqlite3
 def initDataBase():
     conn = sqlite3.connect('events.db')
     conn.execute('''CREATE TABLE IF NOT EXISTS 'EVENT' (
+             ID          INTEGER    PRIMARY KEY AUTOINCREMENT,
              FECHA       TEXT       NOT NULL,
 			 TAG         CHAR(10),
 	         NOMBRE      CHAR(50)   NOT NULL,
@@ -31,11 +32,15 @@ def newData(fecha, tag, nombre, grupo, x, y, descipcion, imagen):
     # print ("%s, %s, %s ,%i, %i, %s, %s" % (tag,nombre,grupo,x,y,descipcion,imagen));
 
     # fecha,
-    cur.execute("INSERT INTO EVENT VALUES ('{dt}', '{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".
+    cur.execute("INSERT INTO EVENT VALUES (null, '{dt}', '{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".
                 format(dt=fecha, tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=imagen))
+
+    eventId = cur.lastrowid
 
     conn.commit()
     conn.close()
+
+    return eventId
 
 
 def getData():
