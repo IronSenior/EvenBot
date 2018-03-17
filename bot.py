@@ -55,6 +55,13 @@ def stop(m):
     else:
         send(m, "No estas creando ningún evento")
 
+@bot.message_handler(commands=["DlEvent"])
+def dl_event(m):
+    send(m, "Dime la id del evento que quieres eliminar")
+    bot.register_next_step_handler(eve.message, get_dl)
+
+def get_dl(m):
+    
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['tech', 'music', 'sport', 'art', 'otros'])
 def calback_handler(eve):
@@ -69,8 +76,10 @@ def calback_handler(eve):
 @bot.message_handler(commands=['NewEvent'])
 def new_event(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?",
-                     reply_markup=keyboard_ntags)
+    send(m, "IMPORTANTE")
+    send(m, "Si en algún momento te equivocas tendras que volver a empezar poniendo /NewEvent")
+    send(m, "Si cambias de opinión utiliza /stop")
+    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?", reply_markup=keyboard_ntags)
 
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech', 'n_music', 'n_sport', 'n_art', 'n_otros'])
@@ -84,7 +93,7 @@ def get_tag(eve):
     msg = "Has seleccionado " + evento + " como tipo de evento"
     send(eve.message, msg)
     time.sleep(1)
-    send(eve.message, "¿Cuando va a ser tu evento? (M/D/Y-H:M)")
+    send(eve.message, "¿Cuando va a ser tu evento? Ej: 2018-06-26 16:45")
     bot.register_next_step_handler(eve.message, get_fecha)
 
 
@@ -95,7 +104,7 @@ def get_fecha(m):
         send(m, "¿Dónde va a ser tu evento? Enviame la ubicación")
         bot.register_next_step_handler(m, get_lugar)
     else:
-        send(m, "Error con el formato de la fecha y la hora, (M/D/Y-H:M)")
+        send(m, "Error con el formato de la fecha y la hora, pogalo como en el ejemplo")
         send(m, "¿Cuando va a ser tu evento?")
         bot.register_next_step_handler(m, get_fecha)
 
