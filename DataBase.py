@@ -2,57 +2,108 @@
 
 import sqlite3
 
+
 def initDataBase():
-	conn = sqlite3.connect('events.db')
-	conn.execute('''CREATE TABLE EVENT
-			(FECHA       TEXT       NOT NULL,
+    conn = sqlite3.connect('events.db')
+    conn.execute('''CREATE TABLE IF NOT EXISTS 'EVENT' (
+             FECHA       TEXT       NOT NULL,
 			 TAG         CHAR(10),
 	         NOMBRE      CHAR(50)   NOT NULL,
 	         GROUP_      CHAR(20),
 	         X           REAL       NOT NULL,
 	         Y           REAL       NOT NULL,
 	         DESCIPCION  TEXT,
-	         IMAGEN      CHAR(100)  NOT NULL);''')
+	         IMAGEN      CHAR(100)  NOT NULL
+    );''')
 
-	conn.close()
+    conn.execute('''CREATE TABLE IF NOT EXISTS 'TAGCHAT'
+            (CHAT_ID     TEXT       NOT NULL,
+            TAG         CHAR(10)   NOT NULL
+    );''')
+
+    conn.close()
 
 
+def newData(fecha, tag, nombre, grupo, x, y, descipcion, imagen):
 
-def newData(fecha,tag,nombre,grupo,x,y,descipcion,imagen):
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+    # print ("%s, %s, %s ,%i, %i, %s, %s" % (tag,nombre,grupo,x,y,descipcion,imagen));
 
-	conn = sqlite3.connect('events.db')
-	cur = conn.cursor()
-	# print ("%s, %s, %s ,%i, %i, %s, %s" % (tag,nombre,grupo,x,y,descipcion,imagen));
+    # fecha,
+    cur.execute("INSERT INTO EVENT VALUES ('{dt}', '{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".
+                format(dt=fecha, tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=imagen))
 
-	# fecha,
-	cur.execute ("INSERT INTO EVENT VALUES ('{dt}', '{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".\
-	format(dt=fecha, tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=imagen));
+    conn.commit()
+    conn.close()
 
-	conn.commit()
-	conn.close()
 
 def getData():
 
-	conn = sqlite3.connect('events.db')
-	cur = conn.cursor()
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
 
-	cur.execute("SELECT * FROM {tn}".\
-		format(tn="event"));
-	print (cur.fetchall())
+    cur.execute("SELECT * FROM {tn}".
+                format(tn="event"))
+    data = cur.fetchall()
 
-	conn.close()
+    conn.close()
+
+    return data
+
 
 def getDataByTag(tag):
 
-	conn = sqlite3.connect('events.db')
-	cur = conn.cursor()
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
 
-	cur.execute("SELECT * FROM {table} WHERE TAG='{tg}'".\
-		format(table="event", tg=tag));
-	print (cur.fetchall())
+    cur.execute("SELECT * FROM {table} WHERE TAG='{tg}'".
+                format(table="event", tg=tag))
+    data = cur.fetchall()
 
-	conn.close()
+    conn.close()
+
+    return data
+
+
+def getUsersWithTag(tag):
+
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM {table} WHERE TAG='{tg}'".
+                format(table="tagchat", tg=tag))
+    data = cur.fetchall()
+
+    conn.close()
+
+    return data
+
+
+def getTagOfUser(chatId):
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+
+    cur.execute("SELECT tag FROM {table} WHERE CHAT_ID='{chatid}'".
+                format(table="tagchat", chatid=chatId))
+    data = cur.fetchall()
+
+    conn.close()
+
+    return data[0][0]
+
+
+def addTagToUser(chatId, tag):
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+
+    query = "INSERT OR REPLACE INTO TAGCHAT VALUES ('{chatid}', '{tg}');".format(
+        chatid=chatId, tg=tag)
+
+    cur.execute(query)
+
+    conn.commit()
+    conn.close()
+
 
 initDataBase()
-newData("fecha","tag","nombre","grupo",1,1,"descipcion","imagen")
-getData()
