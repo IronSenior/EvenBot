@@ -10,6 +10,7 @@ class Event:
         self.description = description
         self.image = image
 
+    # GETTERS
     @property
     def date(self):
         return self.date
@@ -37,6 +38,8 @@ class Event:
     @property
     def image(self):
         return self.image
+
+    # SETTERS
 
     @date.setter
     def date(self, date):
