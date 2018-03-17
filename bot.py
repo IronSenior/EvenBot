@@ -19,15 +19,18 @@ bot = telebot.TeleBot(token)
 def send(m, message_text):
     bot.send_message(m.chat.id, message_text)
 
+
 userStep = {}
 
+
 def get_user_step(cid):
-	if cid in userStep:
-		return userStep[cid]
-	else:
-		userStep[cid] = 0
-		print "New user detected, who hasn't used \"/start\" yet"
-		return 0
+    if cid in userStep:
+        return userStep[cid]
+    else:
+        userStep[cid] = 0
+        print "New user detected, who hasn't used \"/start\" yet"
+        return 0
+
 
 def sendMarkdownMessage(m, message_text):
     bot.send_message(m.chat.id, message_text, parse_mode="Markdown")
@@ -62,40 +65,40 @@ def new_event(m):
                      reply_markup=keyboard_ntags)
 
 
-
-@bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech','n_music','n_sport','n_art','n_otros'])
+@bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech', 'n_music', 'n_sport', 'n_art', 'n_otros'])
 def get_tag(eve):
-	evento = eve.data[2:]
-	cid = eve.message.chat.id
-	#Guardar en base de datos lo que ha elegido
+    evento = eve.data[2:]
+    cid = eve.message.chat.id
+    # Guardar en base de datos lo que ha elegido
     # Notificar a los usuarios del tag el nuevo evento
 
-	msg = "Has seleccionado " + evento + " como tipo de evento"
-	send(eve.message, msg)
-	send(eve.message, "¿Cuando va a ser tu evento?")
-	bot.register_next_step_handler(eve.message, get_fecha)
+    msg = "Has seleccionado " + evento + " como tipo de evento"
+    send(eve.message, msg)
+    send(eve.message, "¿Cuando va a ser tu evento?")
+    bot.register_next_step_handler(eve.message, get_fecha)
+
 
 def get_fecha(m):
-	cid = m.chat.id
-	if formato.es_fecha(m.text):
-		fecha = m.text
-		#Guardar fecha
-		send(m, "¿Dónde va a ser tu evento? Envianos la ubicación")
-		bot.register_next_step_handler(m, get_lugar)
-	else:
-		send(m, "Error con el formato de la fecha y la hora, (M/D/Y-H:M)")
-		send(m, "¿Cuando va a ser tu evento?")
-		bot.register_next_step_handler(m, get_fecha)
+    cid = m.chat.id
+    if formato.es_fecha(m.text):
+        fecha = m.text
+        # Guardar fecha
+        send(m, "¿Dónde va a ser tu evento? Envianos la ubicación")
+        bot.register_next_step_handler(m, get_lugar)
+    else:
+        send(m, "Error con el formato de la fecha y la hora, (M/D/Y-H:M)")
+        send(m, "¿Cuando va a ser tu evento?")
+        bot.register_next_step_handler(m, get_fecha)
 
 
 def get_lugar(m):
-	cid = m.chat.id
-	if m.location:
-		x = m.location['latitude']
-		y = m.latitude['longitude']
-	else:
-		send(m, "Error, debes mandar una ubicación")
-		bot.register_next_step_handler(m, get_lugar)
+    cid = m.chat.id
+    if m.location:
+        x = m.location['latitude']
+        y = m.latitude['longitude']
+    else:
+        send(m, "Error, debes mandar una ubicación")
+        bot.register_next_step_handler(m, get_lugar)
 
 
 def sendEventMessage(m, event):
