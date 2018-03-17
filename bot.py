@@ -192,14 +192,13 @@ def get_desc(m):
 
     eventData = userData[cid]
     # Añadir imagen segun tag
-    print(eventData)
     newEvent = Event(eventData[1], eventData[0], eventData[5], eventData[4],
                      eventData[2], eventData[3], eventData[6], 'temporal')
 
-    newData(newEvent.date, newEvent.tag, newEvent.name, newEvent.group,
-            newEvent.locX, newEvent.locY, newEvent.description, newEvent.image)
+    eventId = newData(newEvent.date, newEvent.tag, newEvent.name, newEvent.group,
+                      newEvent.locX, newEvent.locY, newEvent.description, newEvent.image)
     del userData[cid]
-    send(m, "Tu evento ha sido guardado correctamente")
+    send(m, "Tu evento ID " + str(eventId) + " ha sido guardado correctamente")
 
 
 def sendEventMessage(m, event):
@@ -224,7 +223,7 @@ def view_events(m):
     receivedEvents = getDataByTag(tag)
 
     events = list(map(lambda eventArray: Event(
-        eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), receivedEvents))
+        eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7], eventArray[8]), receivedEvents))
 
     for event in events:
         sendEventMessage(m, event)
