@@ -87,6 +87,7 @@ def get_tag(eve):
     send(eve.message, "¿Cuando va a ser tu evento? (M/D/Y-H:M)")
     bot.register_next_step_handler(eve.message, get_fecha)
 
+
 def get_fecha(m):
     cid = m.chat.id
     if formato.es_fecha(m.text):
@@ -109,9 +110,12 @@ def get_lugar(m):
         send(m, "Error, debes mandar una ubicación")
         get_lugar2(m)
 
+
 def get_lugar2(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Quieres probar otra vez?", reply_markup=keyboard_lugar)
+    bot.send_message(cid, "¿Quieres probar otra vez?",
+                     reply_markup=keyboard_lugar)
+
 
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
 def get_lugar3(lugar):
@@ -121,9 +125,12 @@ def get_lugar3(lugar):
     else:
         get_group(lugar.message)
 
+
 def get_group(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
+    bot.send_message(
+        cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
+
 
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
 def get_group2(group):
@@ -133,6 +140,7 @@ def get_group2(group):
     else:
         send(group.message, "¿Cómo se llama tu evento?")
         bot.register_next_step_handler(group.message, get_name)
+
 
 def get_group3(m):
     link = m.text
@@ -144,12 +152,14 @@ def get_group3(m):
         send(m, "No has mandado el link correctamente, prueba otra vez")
         bot.register_for_reply(m, get_group3)
 
+
 def get_name(m):
     name = m.text
     cid = m.chat.id
     userData[cid].append(name)
     send(m, "Por último, enviame una pequeña descripción de tu evento")
     bot.register_next_step_handler(m, get_desc)
+
 
 def get_desc(m):
     desc = m.text
@@ -170,7 +180,8 @@ def sendEventMessage(m, event):
         *Descripción: * {}
         *URL del grupo: * {}
     """.format(event.tag, event.name, event.date, event.description, event.group))
-    sendLocation(m, event.locX, event.locY)
+    if not event.locX == 0 and not event.locY == 0:
+        sendLocation(m, event.locX, event.locY)
 
 
 @bot.message_handler(commands=['viewEvents'])
@@ -182,7 +193,7 @@ def view_events(m):
     dummyEvents = [['17/03/2018', 'tech', 'Hackathon1', 'http://google.es',
                     37.864741, -4.795475, 'Best description 1', 'Image1.png'],
                    ['17/03/2018', 'tech', 'Hackathon2', 'http://google.es',
-                    37.864741, -4.795475, 'Best description 2', 'Image2.png']]
+                    0, 0, 'Best description 2', 'Image2.png']]
 
     events = list(map(lambda eventArray: Event(
         eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), dummyEvents))
