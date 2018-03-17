@@ -7,11 +7,13 @@ from Funciones.teclado import *
 from Funciones import formato
 import time
 from event import Event
+from DataBase import *
 
 
 # CONFIGURACION DE TELEGRAM
 token = tk.tk()
 bot = telebot.TeleBot(token)
+initDataBase()
 
 # Simplifica el enviar
 
@@ -35,7 +37,9 @@ def sendLocation(m, lat, long):
 def start(m):
     cid = m.chat.id
     send(m, "Hola")
-    bot.send_message(cid, "¿Qué tipo de eventos te gustaría ver?", reply_markup=keyboard_tags)
+    bot.send_message(cid, "¿Qué tipo de eventos te gustaría ver?",
+                     reply_markup=keyboard_tags)
+
 
 @bot.message_handler(commands=['stop'])
 def stop(m):
@@ -46,15 +50,17 @@ def stop(m):
     else:
         send(m, "No estas creando ningún evento")
 
+
 @bot.message_handler(commands=["DlEvent"])
 def dl_event(m):
     send(m, "Dime la id del evento que quieres eliminar")
     bot.register_next_step_handler(eve.message, get_dl)
 
+
 def get_dl(m):
     if m.text.isdigit():
         try:
-            #Eliminar evento por la id que se le ha pasado
+            # Eliminar evento por la id que se le ha pasado
             pass
         except:
             send(m, "Ha habido un error con la id que me has dado")
@@ -66,7 +72,7 @@ def get_dl(m):
 def calback_handler(eve):
     evento = eve.data
     cid = eve.message.chat.id
-    # Guardar en base de datos lo que ha elegido
+    addTagToUser(cid, evento)
 
     msg = "Has agragado " + evento + " a tu lista"
     bot.send_message(cid, msg)
@@ -78,7 +84,8 @@ def new_event(m):
     send(m, "IMPORTANTE")
     send(m, "Si en algún momento te equivocas tendras que volver a empezar poniendo /NewEvent")
     send(m, "Si cambias de opinión utiliza /stop")
-    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?", reply_markup=keyboard_ntags)
+    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?",
+                     reply_markup=keyboard_ntags)
 
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech', 'n_music', 'n_sport', 'n_art', 'n_otros'])
@@ -138,7 +145,8 @@ def get_lugar2(m):
         return
 
     cid = m.chat.id
-    bot.send_message(cid, "¿Quieres probar otra vez?", reply_markup=keyboard_lugar)
+    bot.send_message(cid, "¿Quieres probar otra vez?",
+                     reply_markup=keyboard_lugar)
 
 
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
@@ -150,7 +158,8 @@ def get_lugar3(lugar):
 
     cid = lugar.message.chat.id
     if lugar.data == "I":
-        send(lugar.message, "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
+        send(lugar.message,
+             "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
         bot.register_next_step_handler(lugar.message, get_lugar)
     else:
         userData[cid].append("")
@@ -165,7 +174,8 @@ def get_group(m):
         return
 
     cid = m.chat.id
-    bot.send_message(cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
+    bot.send_message(
+        cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
 
 
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
@@ -224,9 +234,16 @@ def get_desc(m):
     desc = m.text
     cid = m.chat.id
     userData[cid].append(desc)
-    #Guarda toda la información en la DB
+
+    eventData = userData[cid]
+    # Añadir imagen segun tag
+    newEvent = Event(eventData[1], eventData[0], eventData[5], eventData[4],
+                     eventData[2], eventData[3], eventData[6], 'temporal')
+
+    eventId = newData(newEvent.date, newEvent.tag, newEvent.name, newEvent.group,
+                      newEvent.locX, newEvent.locY, newEvent.description, newEvent.image)
     del userData[cid]
-    send(m, "Tu evento ha sido guardado correctamente")
+    send(m, "Tu evento ID " + str(eventId) + " ha sido guardado correctamente")
 
 
 def sendEventMessage(m, event):
@@ -243,19 +260,15 @@ def sendEventMessage(m, event):
         sendLocation(m, event.locX, event.locY)
 
 
-@bot.message_handler(commands=['viewEvents'])
+@bot.message_handler(commands=['ViewEvents'])
 def view_events(m):
     cid = m.chat.id
-    # Obtener el tag del usuario de la base de datos
-    tag = 'tech'  # Dummy Tag
-    # Obtener de base de datos los eventos correspondientes a ese tag
-    dummyEvents = [['17/03/2018', 'tech', 'Hackathon1', 'http://google.es',
-                    37.864741, -4.795475, 'Best description 1', 'Image1.png'],
-                   ['17/03/2018', 'tech', 'Hackathon2', 'http://google.es',
-                    0, 0, 'Best description 2', 'Image2.png']]
+
+    tag = getTagOfUser(cid)
+    receivedEvents = getDataByTag(tag)
 
     events = list(map(lambda eventArray: Event(
-        eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), dummyEvents))
+        eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7], eventArray[8]), receivedEvents))
 
     for event in events:
         sendEventMessage(m, event)
