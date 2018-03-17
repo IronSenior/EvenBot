@@ -23,15 +23,6 @@ def send(m, message_text):
 userData = {}
 
 
-def get_user_step(cid):
-    if cid in userStep:
-        return userStep[cid]
-    else:
-        userStep[cid] = 0
-        print "New user detected, who hasn't used \"/start\" yet"
-        return 0
-
-
 def sendMarkdownMessage(m, message_text):
     bot.send_message(m.chat.id, message_text, parse_mode="Markdown")
 
@@ -137,8 +128,9 @@ def get_lugar2(m):
 
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
 def get_lugar3(lugar):
+    cid = lugar.message.chat.id
     if lugar.data == "I":
-        send(m, "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
+        send(lugar.message, "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
         bot.register_next_step_handler(lugar.message, get_lugar)
     else:
         userData[cid].append("")
@@ -153,6 +145,7 @@ def get_group(m):
 
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
 def get_group2(group):
+    cid = group.message.chat.id
     if group.data == "S":
         send(group.message, "Enviame el link de invitación del grupo")
         bot.register_next_step_handler(group.message, get_group3)
