@@ -22,7 +22,7 @@ def send(m, message_text):
     bot.send_message(m.chat.id, message_text)
 
 
-userStep = {}
+userData = {}
 
 
 def get_user_step(cid):
@@ -46,8 +46,31 @@ def sendLocation(m, lat, long):
 def start(m):
     cid = m.chat.id
     send(m, "Hola")
-    bot.send_message(cid, "¿Qué tipo de eventos te gustaría ver?",
-                     reply_markup=keyboard_tags)
+    bot.send_message(cid, "¿Qué tipo de eventos te gustaría ver?", reply_markup=keyboard_tags)
+
+@bot.message_handler(commands=['stop'])
+def stop(m):
+    cid = m.chat.id
+    if cid in userData:
+        del userData[cid]
+        send(m, "Se ha eliminado el evento")
+    else:
+        send(m, "No estas creando ningún evento")
+
+@bot.message_handler(commands=["DlEvent"])
+def dl_event(m):
+    send(m, "Dime la id del evento que quieres eliminar")
+    bot.register_next_step_handler(eve.message, get_dl)
+
+def get_dl(m):
+    if m.text.isdigit():
+        try:
+            #Eliminar evento por la id que se le ha pasado
+            pass
+        except:
+            send(m, "Ha habido un error con la id que me has dado")
+    else:
+        send(m, "Debes decirme la id del evento que quieres borrar")
 
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['tech', 'music', 'sport', 'art', 'otros'])
@@ -63,34 +86,35 @@ def calback_handler(eve):
 @bot.message_handler(commands=['NewEvent'])
 def new_event(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?",
-                     reply_markup=keyboard_ntags)
+    send(m, "IMPORTANTE")
+    send(m, "Si en algún momento te equivocas tendras que volver a empezar poniendo /NewEvent")
+    send(m, "Si cambias de opinión utiliza /stop")
+    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?", reply_markup=keyboard_ntags)
 
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech', 'n_music', 'n_sport', 'n_art', 'n_otros'])
 def get_tag(eve):
     evento = eve.data[2:]
     cid = eve.message.chat.id
-    # Guardar en base de datos lo que ha elegido
+    userData[cid] = []
+    userData[cid].append(evento)
     # Notificar a los usuarios del tag el nuevo evento
 
     msg = "Has seleccionado " + evento + " como tipo de evento"
     send(eve.message, msg)
     time.sleep(1)
-    send(eve.message, "¿Cuando va a ser tu evento? (M/D/Y-H:M)")
+    send(eve.message, "¿Cuando va a ser tu evento? Ej: 2018-06-26 16:45")
     bot.register_next_step_handler(eve.message, get_fecha)
 
 
 def get_fecha(m):
     cid = m.chat.id
     if formato.es_fecha(m.text):
-        fecha = m.text.split("-")[0]
-        hora = m.text.split("-")[1]
-        # Guardar fecha
+        userData[cid].append(m.text)
         send(m, "¿Dónde va a ser tu evento? Enviame la ubicación")
         bot.register_next_step_handler(m, get_lugar)
     else:
-        send(m, "Error con el formato de la fecha y la hora, (M/D/Y-H:M)")
+        send(m, "Error con el formato de la fecha y la hora, pogalo como en el ejemplo")
         send(m, "¿Cuando va a ser tu evento?")
         bot.register_next_step_handler(m, get_fecha)
 
@@ -100,6 +124,7 @@ def get_lugar(m):
     if m.location:
         x = m.location['latitude']
         y = m.latitude['longitude']
+        userData[cid].append(x, y)
     else:
         send(m, "Error, debes mandar una ubicación")
         get_lugar2(m)
@@ -139,6 +164,7 @@ def get_group2(group):
 def get_group3(m):
     link = m.text
     if es_link(link):
+        userData[cid].append(link)
         send(m, "¿Cómo se llama tu evento?")
         bot.register_next_step_handler(m, get_name)
     else:
@@ -148,12 +174,18 @@ def get_group3(m):
 
 def get_name(m):
     name = m.text
+    cid = m.chat.id
+    userData[cid].append(name)
     send(m, "Por último, enviame una pequeña descripción de tu evento")
     bot.register_next_step_handler(m, get_desc)
 
 
 def get_desc(m):
     desc = m.text
+    cid = m.chat.id
+    userData[cid].append(desc)
+    #Guarda toda la información en la DB
+    del userData[cid]
     send(m, "Tu evento ha sido guardado correctamente")
 
 
