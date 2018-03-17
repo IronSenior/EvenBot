@@ -21,7 +21,7 @@ def start(m):
 	bot.send_message(cid,"¿Qué tipo de eventos te gustaría ver?",reply_markup=keyboard_tags)
 
 
-@bot.callback_query_handler(func=lambda eve: eve.data in ['tech','music','spt','art', 'otros'])
+@bot.callback_query_handler(func=lambda eve: eve.data in ['tech','music','sport','art', 'otros'])
 def calback_handler(eve):
 	evento = eve.data
 	cid = eve.message.chat.id
@@ -34,12 +34,12 @@ def calback_handler(eve):
 @bot.message_handler(commands=['NewEvent'])
 def new_event(m):
 	cid = m.chat.id
-	bot.send_message(cid,"¿Qué tipo de eventos vas a organizar?",reply_markup=keyboard_tags)
+	bot.send_message(cid,"¿Qué tipo de eventos vas a organizar?",reply_markup=keyboard_ntags)
 
 
-@bot.callback_query_handler(func=lambda eve: eve.data in ['tech','music','spt','art', 'otros'])
+@bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech','n_music','n_sport','n_art','n_otros'])
 def calback_handler2(eve):
-	evento = eve.data
+	evento = eve.data[2:]
 	cid = eve.message.chat.id
 	#Guardar en base de datos lo que ha elegido
 
