@@ -65,37 +65,82 @@ def new_event(m):
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech','n_music','n_sport','n_art','n_otros'])
 def get_tag(eve):
-	evento = eve.data[2:]
-	cid = eve.message.chat.id
-	#Guardar en base de datos lo que ha elegido
+    evento = eve.data[2:]
+    cid = eve.message.chat.id
+    #Guardar en base de datos lo que ha elegido
     # Notificar a los usuarios del tag el nuevo evento
 
-	msg = "Has seleccionado " + evento + " como tipo de evento"
-	send(eve.message, msg)
-	send(eve.message, "¿Cuando va a ser tu evento?")
-	bot.register_next_step_handler(eve.message, get_fecha)
+    msg = "Has seleccionado " + evento + " como tipo de evento"
+    send(eve.message, msg)
+    time.sleep(1)
+    send(eve.message, "¿Cuando va a ser tu evento? (M/D/Y-H:M)")
+    bot.register_next_step_handler(eve.message, get_fecha)
 
 def get_fecha(m):
-	cid = m.chat.id
-	if formato.es_fecha(m.text):
-		fecha = m.text
-		#Guardar fecha
-		send(m, "¿Dónde va a ser tu evento? Envianos la ubicación")
-		bot.register_next_step_handler(m, get_lugar)
-	else:
-		send(m, "Error con el formato de la fecha y la hora, (M/D/Y-H:M)")
-		send(m, "¿Cuando va a ser tu evento?")
-		bot.register_next_step_handler(m, get_fecha)
+    cid = m.chat.id
+    if formato.es_fecha(m.text):
+        fecha = m.text.split("-")[0]
+        hora = m.text.split("-")[1]
+        #Guardar fecha
+        send(m, "¿Dónde va a ser tu evento? Enviame la ubicación")
+        bot.register_next_step_handler(m, get_lugar)
+    else:
+        send(m, "Error con el formato de la fecha y la hora, (M/D/Y-H:M)")
+        send(m, "¿Cuando va a ser tu evento?")
+        bot.register_next_step_handler(m, get_fecha)
 
 
 def get_lugar(m):
-	cid = m.chat.id
-	if m.location:
-		x = m.location['latitude']
-		y = m.latitude['longitude']
-	else:
-		send(m, "Error, debes mandar una ubicación")
-		bot.register_next_step_handler(m, get_lugar)
+    cid = m.chat.id
+    if m.location:
+        x = m.location['latitude']
+        y = m.latitude['longitude']
+    else:
+        send(m, "Error, debes mandar una ubicación")
+        get_lugar2(m)
+
+def get_lugar2(m):
+    cid = m.chat.id
+    bot.send_message(cid, "¿Quieres probar otra vez?", reply_markup=keyboard_lugar)
+
+@bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
+def get_lugar3(lugar):
+    if lugar.data == "I":
+        send(m, "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
+        bot.register_next_step_handler(lugar.message, get_lugar)
+    else:
+        get_group(lugar.message)
+
+def get_group(m):
+    cid = m.chat.id
+    bot.send_message(cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
+
+@bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
+def get_group2(group):
+    if group.data == "S":
+        send(group.message, "Enviame el link de invitación del grupo")
+        bot.register_next_step_handler(group.message, get_group3)
+    else:
+        send(group.message, "¿Cómo se llama tu evento?")
+        bot.register_next_step_handler(group.message, get_name)
+
+def get_group3(m):
+    link = m.text
+    if es_link(link):
+        send(m, "¿Cómo se llama tu evento?")
+        bot.register_next_step_handler(m, get_name)
+    else:
+        send(m, "No has mandado el link correctamente, prueba otra vez")
+        bot.register_for_reply(m, get_group3)
+
+def get_name(m):
+    name = m.text
+    send(m, "Por último, enviame una pequeña descripción de tu evento")
+    bot.register_next_step_handler(m, get_desc)
+
+def get_desc(m):
+    desc = m.text
+    send(m, "Tu evento ha sido guardado correctamente")
 
 
 def sendEventMessage(m, event):
