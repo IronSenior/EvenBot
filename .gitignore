@@ -1,4 +1,5 @@
 private.py
 venv
 *db
-.pyc
+*.pyc
+**/*.pyc
