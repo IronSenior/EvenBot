@@ -7,11 +7,13 @@ from Funciones.teclado import *
 from Funciones import formato
 import time
 from event import Event
+from DataBase import *
 
 
 # CONFIGURACION DE TELEGRAM
 token = tk.tk()
 bot = telebot.TeleBot(token)
+initDataBase()
 
 # Simplifica el enviar
 
@@ -52,7 +54,7 @@ def start(m):
 def calback_handler(eve):
     evento = eve.data
     cid = eve.message.chat.id
-    # Guardar en base de datos lo que ha elegido
+    addTagToUser(cid, evento)
 
     msg = "Has agragado " + evento + " a tu lista"
     bot.send_message(cid, msg)
@@ -172,16 +174,13 @@ def sendEventMessage(m, event):
 @bot.message_handler(commands=['viewEvents'])
 def view_events(m):
     cid = m.chat.id
-    # Obtener el tag del usuario de la base de datos
-    tag = 'tech'  # Dummy Tag
+
+    tag = getTagOfUser(cid)
     # Obtener de base de datos los eventos correspondientes a ese tag
-    dummyEvents = [['17/03/2018', 'tech', 'Hackathon1', 'http://google.es',
-                    37.864741, -4.795475, 'Best description 1', 'Image1.png'],
-                   ['17/03/2018', 'tech', 'Hackathon2', 'http://google.es',
-                    0, 0, 'Best description 2', 'Image2.png']]
+    receivedEvents = getDataByTag(tag)
 
     events = list(map(lambda eventArray: Event(
-        eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), dummyEvents))
+        eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), receivedEvents))
 
     for event in events:
         sendEventMessage(m, event)
