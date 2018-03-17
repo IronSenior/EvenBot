@@ -25,15 +25,6 @@ def send(m, message_text):
 userData = {}
 
 
-def get_user_step(cid):
-    if cid in userStep:
-        return userStep[cid]
-    else:
-        userStep[cid] = 0
-        print "New user detected, who hasn't used \"/start\" yet"
-        return 0
-
-
 def sendMarkdownMessage(m, message_text):
     bot.send_message(m.chat.id, message_text, parse_mode="Markdown")
 
@@ -139,11 +130,13 @@ def get_lugar(m):
 
 def get_lugar2(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Quieres probar otra vez?", reply_markup=keyboard_lugar)
+    bot.send_message(cid, "¿Quieres probar otra vez?",
+                     reply_markup=keyboard_lugar)
 
 
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
 def get_lugar3(lugar):
+    cid = lugar.message.chat.id
     if lugar.data == "I":
         send(lugar.message,
              "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
@@ -156,11 +149,13 @@ def get_lugar3(lugar):
 
 def get_group(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
+    bot.send_message(
+        cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
 
 
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
 def get_group2(group):
+    cid = group.message.chat.id
     if group.data == "S":
         send(group.message, "Enviame el link de invitación del grupo")
         bot.register_next_step_handler(group.message, get_group3)
@@ -172,6 +167,7 @@ def get_group2(group):
 
 def get_group3(m):
     link = m.text
+    cid = m.chat.id
     if formato.es_link(link):
         userData[cid].append(link)
         send(m, "¿Cómo se llama tu evento?")
