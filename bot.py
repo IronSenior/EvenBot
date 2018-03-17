@@ -279,8 +279,11 @@ def view_events(m):
     events = list(map(lambda eventArray: Event(
         eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7], eventArray[8]), receivedEvents))
 
-    for event in events:
-        sendEventMessage(cid, event)
+    if len(events):
+        for event in events:
+            sendEventMessage(cid, event)
+    else:
+        send(m, "No hay ningún evento todavia")
 
 
 bot.polling()
