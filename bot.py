@@ -152,7 +152,7 @@ def get_lugar2(m):
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
 def get_lugar3(lugar):
     # checks for /stop commands
-    if m.message.text=="/stop":
+    if lugar.message.text=="/stop":
         stop(m)
         return
 
@@ -169,7 +169,7 @@ def get_lugar3(lugar):
 
 def get_group(m):
     # checks for /stop commands
-    if m.message.text=="/stop":
+    if m.text=="/stop":
         stop(m)
         return
 
