@@ -54,18 +54,15 @@ def stop(m):
 @bot.message_handler(commands=["DlEvent"])
 def dl_event(m):
     send(m, "Dime la id del evento que quieres eliminar")
-    bot.register_next_step_handler(eve.message, get_dl)
+    bot.register_next_step_handler(m, get_dl)
 
 
 def get_dl(m):
-    if m.text.isdigit():
-        try:
-            # Eliminar evento por la id que se le ha pasado
-            pass
-        except:
-            send(m, "Ha habido un error con la id que me has dado")
-    else:
-        send(m, "Debes decirme la id del evento que quieres borrar")
+    try:
+        deleteById(int(m.text))
+        send(m, "El evento se ha borrado correctamente")
+    except:
+        send(m, "Ha habido un error con la id que me has dado")
 
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['tech', 'music', 'sport', 'art', 'otros'])

@@ -113,12 +113,12 @@ def addTagToUser(chatId, tag):
     conn.commit()
     conn.close()
 
-def removeById(chatId):
+def deleteById(chatId):
     conn = sqlite3.connect('events.db')
     cur = conn.cursor()
 
     delete = "DELETE FROM {table} WHERE ID={chatId};".format(
-        chatid=chatId, table="event")
+        chatId=chatId, table="event")
     cur.execute(delete)
 
     conn.commit()
