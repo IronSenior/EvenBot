@@ -17,7 +17,7 @@ def initDataBase():
     );''')
 
     conn.execute('''CREATE TABLE IF NOT EXISTS 'TAGCHAT'
-            (CHAT_ID     TEXT       NOT NULL,
+            (CHAT_ID     TEXT       PRIMARY KEY,
             TAG         CHAR(10)   NOT NULL
     );''')
 
@@ -97,10 +97,13 @@ def addTagToUser(chatId, tag):
     conn = sqlite3.connect('events.db')
     cur = conn.cursor()
 
-    query = "INSERT OR REPLACE INTO TAGCHAT VALUES ('{chatid}', '{tg}');".format(
+    insert = "INSERT OR IGNORE INTO TAGCHAT VALUES ('{chatid}', '{tg}');".format(
         chatid=chatId, tg=tag)
+    cur.execute(insert)
 
-    cur.execute(query)
+    update = "UPDATE TAGCHAT SET TAG = '{tg}' WHERE CHAT_ID = {chatid};".format(
+        chatid=chatId, tg=tag)
+    cur.execute(update)
 
     conn.commit()
     conn.close()
