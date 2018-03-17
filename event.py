@@ -1,12 +1,11 @@
 class Event:
-    def __init__(self, date, tag, name, group, locX, locY, locZ, description, image):
+    def __init__(self, date, tag, name, group, locX, locY, description, image):
         self.date = date
         self.tag = tag
         self.name = name
         self.group = group
         self.locX = locX
         self.locY = locY
-        self.locZ = locZ
         self.description = description
         self.image = image
 
@@ -29,7 +28,7 @@ class Event:
 
     @property
     def location(self):
-        return self.locX, self.locY, self.locZ
+        return self.locX, self.locY
 
     @property
     def description(self):
@@ -58,10 +57,9 @@ class Event:
         self.group = group
 
     @location.setter
-    def location(self, x, y, z):
+    def location(self, x, y):
         self.locX = x
         self.locY = y
-        self.locZ = z
 
     @description.setter
     def description(self, description):
