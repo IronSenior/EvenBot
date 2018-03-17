@@ -1,0 +1,4 @@
+/start - Declara que temas te gustan
+/NewEvent - Crea un nuevo envento
+/stop - Para de crear el evento 
+/viewEvents - Ver los eventos que me interesan

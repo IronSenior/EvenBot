@@ -198,6 +198,7 @@ def sendEventMessage(m, event):
         sendLocation(m, event.locX, event.locY)
 
 
+
 @bot.message_handler(commands=['viewEvents'])
 def view_events(m):
     cid = m.chat.id

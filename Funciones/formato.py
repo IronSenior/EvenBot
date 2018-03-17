@@ -11,5 +11,9 @@ def es_fecha(texto):
 		return False
 
 def es_link(link):
-	if link[:1] == "t.":
+	print link[:1]
+	if link[:2] == "t.":
 		return True
+
+
+es_link("t.dasd")
