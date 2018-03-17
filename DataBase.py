@@ -2,56 +2,57 @@
 
 import sqlite3
 
-def init():
+def initDataBase():
 	conn = sqlite3.connect('events.db')
-	# print ("Opened database successfully");
-	# FECHA       DATE       NOT NULL,
 	conn.execute('''CREATE TABLE EVENT
-			(
-			TAG         CHAR(10),
+			(FECHA       TEXT       NOT NULL,
+			 TAG         CHAR(10),
 	         NOMBRE      CHAR(50)   NOT NULL,
-	         GROUP_       CHAR(20),
+	         GROUP_      CHAR(20),
 	         X           REAL       NOT NULL,
 	         Y           REAL       NOT NULL,
 	         DESCIPCION  TEXT,
 	         IMAGEN      CHAR(100)  NOT NULL);''')
 
-	# print ("Table created successfully");
 	conn.close()
 
 
 
-def new_data(tag,nombre,grupo,x,y,descipcion,imagen):
+def newData(fecha,tag,nombre,grupo,x,y,descipcion,imagen):
 
 	conn = sqlite3.connect('events.db')
 	cur = conn.cursor()
-	# print ("Opened database successfully");
-	print ("%s, %s, %s ,%i, %i, %s, %s" % (tag,nombre,grupo,x,y,descipcion,imagen));
+	# print ("%s, %s, %s ,%i, %i, %s, %s" % (tag,nombre,grupo,x,y,descipcion,imagen));
 
 	# fecha,
-	cur.execute ("INSERT INTO EVENT VALUES ('{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".\
-	format(tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=imagen));
+	cur.execute ("INSERT INTO EVENT VALUES ('{dt}', '{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".\
+	format(dt=fecha, tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=imagen));
 
-	# print ("Table created successfully");
 	conn.commit()
 	conn.close()
 
-
-
-def get_data():
+def getData():
 
 	conn = sqlite3.connect('events.db')
 	cur = conn.cursor()
-	print ("Opened database successfully");
 
 	cur.execute("SELECT * FROM {tn}".\
 		format(tn="event"));
 	print (cur.fetchall())
 
-	print ("Table created successfully");
 	conn.close()
 
+def getDataByTag(tag):
 
+	conn = sqlite3.connect('events.db')
+	cur = conn.cursor()
 
-init()
-new_data("tag","name","group",1,1,"descipcion","imagen")
+	cur.execute("SELECT * FROM {table} WHERE TAG='{tg}'".\
+		format(table="event", tg=tag));
+	print (cur.fetchall())
+
+	conn.close()
+
+initDataBase()
+newData("fecha","tag","nombre","grupo",1,1,"descipcion","imagen")
+getData()
