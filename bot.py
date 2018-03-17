@@ -76,7 +76,7 @@ def calback_handler(eve):
     cid = eve.message.chat.id
     addTagToUser(cid, evento)
 
-    msg = "Has agragado " + evento + " a tu lista"
+    msg = "Te has apuntado a " + evento 
     bot.send_message(cid, msg)
 
 
@@ -189,7 +189,7 @@ def get_group2(group):
 
     cid = group.message.chat.id
     if group.data == "S":
-        send(group.message, "Enviame el link de invitación del grupo")
+        send(group.message, "Enviame el link de invitación del grupo (t.me/joinchat/...)")
         bot.register_next_step_handler(group.message, get_group3)
     else:
         userData[cid].append(" ")
