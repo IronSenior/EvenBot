@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/mnt/data_1/code/python/EvenBot/venv/bin/python2.7
 # -*- coding: utf-8 -*-
 
 import telebot

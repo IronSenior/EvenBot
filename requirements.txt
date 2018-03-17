@@ -1,1 +1,6 @@
-sqlite
+pip>=9.0.2
+pyTelegramBotAPI>=3.6.1
+requests>=2.7.0
+setuptools>=38.7.0
+six>=1.11.0
+wheel>=0.30.0

@@ -1,3 +1,4 @@
 private.py
 venv
 *db
+.pyc
