@@ -61,7 +61,15 @@ def dl_event(m):
     bot.register_next_step_handler(eve.message, get_dl)
 
 def get_dl(m):
-    
+    if m.text.isdigit():
+        try:
+            #Eliminar evento por la id que se le ha pasado
+            pass
+        except:
+            send(m, "Ha habido un error con la id que me has dado")
+    else:
+        send(m, "Debes decirme la id del evento que quieres borrar")
+
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['tech', 'music', 'sport', 'art', 'otros'])
 def calback_handler(eve):
