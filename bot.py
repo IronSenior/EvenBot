@@ -176,7 +176,6 @@ def view_events(m):
     cid = m.chat.id
 
     tag = getTagOfUser(cid)
-    # Obtener de base de datos los eventos correspondientes a ese tag
     receivedEvents = getDataByTag(tag)
 
     events = list(map(lambda eventArray: Event(
