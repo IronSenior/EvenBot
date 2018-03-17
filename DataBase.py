@@ -14,7 +14,7 @@ def initDataBase():
 	         X           REAL       NOT NULL,
 	         Y           REAL       NOT NULL,
 	         DESCIPCION  TEXT,
-	         IMAGEN      CHAR(100)  NOT NULL
+	         CHAT_ID     INT        NOT NULL
     );''')
 
     conn.execute('''CREATE TABLE IF NOT EXISTS 'TAGCHAT'
@@ -25,7 +25,7 @@ def initDataBase():
     conn.close()
 
 
-def newData(fecha, tag, nombre, grupo, x, y, descipcion, imagen):
+def newData(fecha, tag, nombre, grupo, x, y, descipcion, cid):
 
     conn = sqlite3.connect('events.db')
     cur = conn.cursor()
@@ -33,7 +33,7 @@ def newData(fecha, tag, nombre, grupo, x, y, descipcion, imagen):
 
     # fecha,
     cur.execute("INSERT INTO EVENT VALUES (null, '{dt}', '{tg}', '{nom}', '{gr}', {x_}, {y_}, '{desc}', '{im}');".
-                format(dt=fecha, tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=imagen))
+                format(dt=fecha, tg=tag, nom=nombre, gr=grupo, x_=x, y_=y, desc=descipcion, im=cid))
 
     eventId = cur.lastrowid
 
@@ -42,6 +42,17 @@ def newData(fecha, tag, nombre, grupo, x, y, descipcion, imagen):
 
     return eventId
 
+def getDatabyID(event_id):
+    conn = sqlite3.connect('events.db')
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM {table} WHERE ID='{id}'".
+                format(table="event", id=event_id))
+    data = cur.fetchall()
+
+    conn.close()
+
+    return data[0]
 
 def getData():
 

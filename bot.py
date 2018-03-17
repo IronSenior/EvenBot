@@ -58,9 +58,14 @@ def dl_event(m):
 
 
 def get_dl(m):
+    cid = m.chat.id
+    event = getDatabyID(m.text)
     try:
-        deleteById(int(m.text))
-        send(m, "El evento se ha borrado correctamente")
+        if cid == event[-1]:
+            deleteById(int(m.text))
+            send(m, "El evento se ha borrado correctamente")
+        else:
+            send(m, "No tienes permiso para borrar este evento")
     except:
         send(m, "Ha habido un error con la id que me has dado")
 
@@ -235,10 +240,10 @@ def get_desc(m):
     eventData = userData[cid]
     # Añadir imagen segun tag
     newEvent = Event(eventData[1], eventData[0], eventData[5], eventData[4],
-                     eventData[2], eventData[3], eventData[6], 'temporal')
+                     eventData[2], eventData[3], eventData[6], "temporal")
 
     eventId = newData(newEvent.date, newEvent.tag, newEvent.name, newEvent.group,
-                      newEvent.locX, newEvent.locY, newEvent.description, newEvent.image)
+                      newEvent.locX, newEvent.locY, newEvent.description, cid)
     del userData[cid]
     send(m, "Tu evento ID " + str(eventId) + " ha sido guardado correctamente")
 
