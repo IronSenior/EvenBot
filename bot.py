@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/mnt/data_1/code/python/EvenBot/venv/bin/python2.7
 # -*- coding: utf-8 -*-
 
 import telebot
@@ -139,8 +139,7 @@ def get_lugar(m):
 
 def get_lugar2(m):
     cid = m.chat.id
-    bot.send_message(cid, "¿Quieres probar otra vez?",
-                     reply_markup=keyboard_lugar)
+    bot.send_message(cid, "¿Quieres probar otra vez?", reply_markup=keyboard_lugar)
 
 
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
@@ -150,13 +149,14 @@ def get_lugar3(lugar):
              "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
         bot.register_next_step_handler(lugar.message, get_lugar)
     else:
+        userData[cid].append("")
+        userData[cid].append("")
         get_group(lugar.message)
 
 
 def get_group(m):
     cid = m.chat.id
-    bot.send_message(
-        cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
+    bot.send_message(cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
 
 
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
@@ -165,13 +165,14 @@ def get_group2(group):
         send(group.message, "Enviame el link de invitación del grupo")
         bot.register_next_step_handler(group.message, get_group3)
     else:
+        userData[cid].append("")
         send(group.message, "¿Cómo se llama tu evento?")
         bot.register_next_step_handler(group.message, get_name)
 
 
 def get_group3(m):
     link = m.text
-    if es_link(link):
+    if formato.es_link(link):
         userData[cid].append(link)
         send(m, "¿Cómo se llama tu evento?")
         bot.register_next_step_handler(m, get_name)

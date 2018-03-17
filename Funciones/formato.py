@@ -10,3 +10,6 @@ def es_fecha(texto):
 	except:
 		return False
 
+def es_link(link):
+	if link[:1] == "t.":
+		return True
