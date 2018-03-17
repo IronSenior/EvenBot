@@ -46,7 +46,9 @@ def sendLocation(m, lat, long):
 def start(m):
     cid = m.chat.id
     send(m, "Hola")
-    bot.send_message(cid, "¿Qué tipo de eventos te gustaría ver?", reply_markup=keyboard_tags)
+    bot.send_message(cid, "¿Qué tipo de eventos te gustaría ver?",
+                     reply_markup=keyboard_tags)
+
 
 @bot.message_handler(commands=['stop'])
 def stop(m):
@@ -57,15 +59,17 @@ def stop(m):
     else:
         send(m, "No estas creando ningún evento")
 
+
 @bot.message_handler(commands=["DlEvent"])
 def dl_event(m):
     send(m, "Dime la id del evento que quieres eliminar")
     bot.register_next_step_handler(eve.message, get_dl)
 
+
 def get_dl(m):
     if m.text.isdigit():
         try:
-            #Eliminar evento por la id que se le ha pasado
+            # Eliminar evento por la id que se le ha pasado
             pass
         except:
             send(m, "Ha habido un error con la id que me has dado")
@@ -89,7 +93,8 @@ def new_event(m):
     send(m, "IMPORTANTE")
     send(m, "Si en algún momento te equivocas tendras que volver a empezar poniendo /NewEvent")
     send(m, "Si cambias de opinión utiliza /stop")
-    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?", reply_markup=keyboard_ntags)
+    bot.send_message(cid, "¿Qué tipo de eventos vas a organizar?",
+                     reply_markup=keyboard_ntags)
 
 
 @bot.callback_query_handler(func=lambda eve: eve.data in ['n_tech', 'n_music', 'n_sport', 'n_art', 'n_otros'])
@@ -122,9 +127,11 @@ def get_fecha(m):
 def get_lugar(m):
     cid = m.chat.id
     if m.location:
-        x = m.location['latitude']
-        y = m.latitude['longitude']
-        userData[cid].append(x, y)
+        x = m.location.latitude
+        y = m.location.longitude
+        userData[cid].append(x)
+        userData[cid].append(y)
+        get_group(m)
     else:
         send(m, "Error, debes mandar una ubicación")
         get_lugar2(m)
@@ -139,7 +146,8 @@ def get_lugar2(m):
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
 def get_lugar3(lugar):
     if lugar.data == "I":
-        send(m, "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
+        send(lugar.message,
+             "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
         bot.register_next_step_handler(lugar.message, get_lugar)
     else:
         get_group(lugar.message)
@@ -184,7 +192,15 @@ def get_desc(m):
     desc = m.text
     cid = m.chat.id
     userData[cid].append(desc)
-    #Guarda toda la información en la DB
+
+    eventData = userData[cid]
+    # Añadir imagen segun tag
+    print(eventData)
+    newEvent = Event(eventData[1], eventData[0], eventData[5], eventData[4],
+                     eventData[2], eventData[3], eventData[6], 'temporal')
+
+    newData(newEvent.date, newEvent.tag, newEvent.name, newEvent.group,
+            newEvent.locX, newEvent.locY, newEvent.description, newEvent.image)
     del userData[cid]
     send(m, "Tu evento ha sido guardado correctamente")
 
