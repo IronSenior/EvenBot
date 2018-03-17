@@ -76,12 +76,12 @@ def getUsersWithTag(tag):
     conn = sqlite3.connect('events.db')
     cur = conn.cursor()
 
-    cur.execute("SELECT * FROM {table} WHERE TAG='{tg}'".
+    cur.execute("SELECT chat_id FROM {table} WHERE TAG='{tg}'".
                 format(table="tagchat", tg=tag))
     data = cur.fetchall()
 
     conn.close()
-
+    print data
     return data
 
 

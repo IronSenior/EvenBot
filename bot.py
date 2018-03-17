@@ -162,8 +162,8 @@ def get_lugar3(lugar):
              "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
         bot.register_next_step_handler(lugar.message, get_lugar)
     else:
-        userData[cid].append("")
-        userData[cid].append("")
+        userData[cid].append(0)
+        userData[cid].append(0)
         get_group(lugar.message)
 
 
@@ -181,7 +181,7 @@ def get_group(m):
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
 def get_group2(group):
     # checks for /stop commands
-    if m.text=="/stop":
+    if group.message.text=="/stop":
         stop(m)
         return
 
@@ -190,7 +190,7 @@ def get_group2(group):
         send(group.message, "Enviame el link de invitación del grupo")
         bot.register_next_step_handler(group.message, get_group3)
     else:
-        userData[cid].append("")
+        userData[cid].append(" ")
         send(group.message, "¿Cómo se llama tu evento?")
         bot.register_next_step_handler(group.message, get_name)
 
@@ -264,7 +264,7 @@ def sendEventMessage(cid, event):
 
 def inform_of_event(chats, event):
     for chat in chats:
-        sendEventMessage(chat, event)
+        sendEventMessage(chat[0], event)
 
 
 @bot.message_handler(commands=['ViewEvents'])
