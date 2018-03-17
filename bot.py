@@ -120,9 +120,11 @@ def get_fecha(m):
 def get_lugar(m):
     cid = m.chat.id
     if m.location:
-        x = m.location['latitude']
-        y = m.latitude['longitude']
-        userData[cid].append(x, y)
+        x = m.location.latitude
+        y = m.location.longitude
+        userData[cid].append(x)
+        userData[cid].append(y)
+        get_group(m)
     else:
         send(m, "Error, debes mandar una ubicación")
         get_lugar2(m)
@@ -162,6 +164,7 @@ def get_group2(group):
 
 def get_group3(m):
     link = m.text
+    cid = m.chat.id
     if formato.es_link(link):
         userData[cid].append(link)
         send(m, "¿Cómo se llama tu evento?")
