@@ -97,6 +97,11 @@ def get_tag(eve):
 
 
 def get_fecha(m):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     cid = m.chat.id
     if formato.es_fecha(m.text):
         userData[cid].append(m.text)
@@ -109,6 +114,11 @@ def get_fecha(m):
 
 
 def get_lugar(m):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     cid = m.chat.id
     if m.location:
         x = m.location.latitude
@@ -122,12 +132,22 @@ def get_lugar(m):
 
 
 def get_lugar2(m):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     cid = m.chat.id
     bot.send_message(cid, "¿Quieres probar otra vez?", reply_markup=keyboard_lugar)
 
 
 @bot.callback_query_handler(func=lambda lugar: lugar.data in ["I", "O"])
 def get_lugar3(lugar):
+    # checks for /stop commands
+    if m.message.text=="/stop":
+        stop(m)
+        return
+
     cid = lugar.message.chat.id
     if lugar.data == "I":
         send(lugar.message, "¿Dónde va a ser tu evento? Enviame la ubicación (Desde el móvil)")
@@ -139,12 +159,22 @@ def get_lugar3(lugar):
 
 
 def get_group(m):
+    # checks for /stop commands
+    if m.message.text=="/stop":
+        stop(m)
+        return
+
     cid = m.chat.id
     bot.send_message(cid, "¿Tienes un grupo de telegram del evento?", reply_markup=keyboard_group)
 
 
 @bot.callback_query_handler(func=lambda group: group.data in ['S', 'N'])
 def get_group2(group):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     cid = group.message.chat.id
     if group.data == "S":
         send(group.message, "Enviame el link de invitación del grupo")
@@ -156,6 +186,11 @@ def get_group2(group):
 
 
 def get_group3(m):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     link = m.text
     cid = m.chat.id
     if formato.es_link(link):
@@ -168,6 +203,11 @@ def get_group3(m):
 
 
 def get_name(m):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     name = m.text
     cid = m.chat.id
     userData[cid].append(name)
@@ -176,6 +216,11 @@ def get_name(m):
 
 
 def get_desc(m):
+    # checks for /stop commands
+    if m.text=="/stop":
+        stop(m)
+        return
+
     desc = m.text
     cid = m.chat.id
     userData[cid].append(desc)
