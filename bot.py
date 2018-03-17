@@ -122,10 +122,8 @@ def view_events(m):
                    ['17/03/2018', 'tech', 'Hackathon2', 'http://google.es',
                     37.864741, -4.795475, 'Best description 2', 'Image2.png']]
 
-    def createEvent(eventArray): return Event(
-        eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7])
-
-    events = list(map(createEvent, dummyEvents))
+    events = list(map(lambda eventArray: Event(
+        eventArray[0], eventArray[1], eventArray[2], eventArray[3], eventArray[4], eventArray[5], eventArray[6], eventArray[7]), dummyEvents))
 
     for event in events:
         sendEventMessage(m, event)
